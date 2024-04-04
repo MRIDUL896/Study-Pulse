@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const Student = require('./Models/student_model');
 const sequelize = require('./config/database');
-const userRouter = require('./Routes/student_Router');
+const studentRouter = require('./Routes/student_routes');
 
 dotenv.config();
 
@@ -22,14 +22,16 @@ sequelize.authenticate().then(()=>{
 });
 
 //syncing with database(updation)
-sequelize.sync({ force: true }).then(()=>{
+sequelize.sync().then(()=>{
     console.log('Database sync is successfull');
 }).catch((err) => {
     console.error('Database sync is unsuccessfull', err);
 });
 
-app.use('/StudyPulse/student',userRouter);
+//stiching the routers
+app.use('/StudyPulse/student',studentRouter);
 
+//setting up server
 const port = process.env.PORT;
 app.listen(3000, () => {
   console.log(`Server started on port 3000`);
