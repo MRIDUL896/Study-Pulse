@@ -1,5 +1,7 @@
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../config/database');
+const Course = require('./course_model');
+const Enrollment = require('./enrollment_model');
 
 const Student = sequelize.define('Student', {
   name: {
@@ -15,13 +17,21 @@ const Student = sequelize.define('Student', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  roll : {
+  studentID : {
     type : DataTypes.INTEGER,
-    allowNull: false,
+    // allowNull: false,
     unique : true,
+    autoIncrement : true,
+    primaryKey : true
   },
 }, {
   tableName: 'students',
 });
+
+Student.belongsToMany(Course,{
+  through : Enrollment,
+  foreignKey : 'studentID',
+  otherKey : 'courseID'
+})
 
 module.exports = Student;
