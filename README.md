@@ -19,3 +19,6 @@ Backend code for an e-learning platform.
 - Added update information functionality for students.
 - Defined schema for courses and made a many to many relationship between courses and students.
 - Defined schema for superadmin. 
+
+### Day 4 (5 April, 2024)
+- Added fuctionalities for admin like login, get info,update info and create course.

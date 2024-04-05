@@ -18,7 +18,7 @@ const handleStudentSignUp = async (req, res) => {
     console.log("signup unsuccessfull");
     res.json({ "message": "signup unsuccessful", error: err });
   }
-};
+}
 
 const handleStudentLogin = async (req, res) => {
   let user = req.body; //destructuring in JS
@@ -49,7 +49,7 @@ const handleStudentLogin = async (req, res) => {
     console.log(err);
     res.json({ error: err });
   }
-};
+}
 
 const getUserInfo = async (req, res) => {
   try {
@@ -65,7 +65,7 @@ const getUserInfo = async (req, res) => {
   } catch (err) {
     res.json({ error: err });
   }
-};
+}
 
 const updateStudentInfo = async (req, res) => {
   try {
@@ -89,6 +89,6 @@ const updateStudentInfo = async (req, res) => {
   } catch (err) {
     res.json({ error: err });
   }
-};
+}
 
 module.exports = { handleStudentSignUp, handleStudentLogin, getUserInfo ,updateStudentInfo};

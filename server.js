@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const Student = require('./Models/student_model');
 const sequelize = require('./config/database');
 const studentRouter = require('./Routes/student_routes');
+const adminRouter = require('./Routes/admin_routes');
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ sequelize.sync().then(()=>{
 
 //stiching the routers
 app.use('/StudyPulse/student',studentRouter);
+app.use('/StudyPulse/admin',adminRouter);
 
 //setting up server
 const port = process.env.PORT;

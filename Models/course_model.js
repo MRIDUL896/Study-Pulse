@@ -7,6 +7,7 @@ const Course = sequelize.define('Course',{
     courseID : {
         type : DataTypes.INTEGER,
         allowNull : false,
+        autoIncrement : true,
         primaryKey : true
     },
     name : {
@@ -22,23 +23,22 @@ const Course = sequelize.define('Course',{
         allowNull : false
     },
     description : {
-        type : DataTypes.INTEGER
+        type : DataTypes.STRING
     },
     isLive : {
         type : DataTypes.BOOLEAN,
-        allowNull : false
+        //allowNull : false
     },
     category : {
-        type : DataTypes.BOOLEAN,
+        type : DataTypes.STRING,
         allowNull : false
     },
     level : {
-        type : DataTypes.INTEGER,
+        type : DataTypes.STRING,
         allowNull : false
     },
     rating : {
         type : DataTypes.INTEGER,
-        allowNull : false,
         validate : {
             min : 0,
             max : 5
@@ -46,12 +46,22 @@ const Course = sequelize.define('Course',{
     },
     startDate : {
         type : DataTypes.DATE,
-        allowNull : false
+        //allowNull : false
     }
 },{
     tableName : 'courses'
 })
 
+
+// {
+//     "name" : "",
+//     "instructor" : "",
+//     "price" : "",
+//     "description" : "",
+//     "islive" : "",
+//     "category" : "",
+//     "level" : ""
+// }
 // Course.belongsToMany(Student,{
 //     through : Enrollment,
 //     foreignKey : 'courseID',
