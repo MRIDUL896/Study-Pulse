@@ -104,12 +104,88 @@ const createCourse = async (req, res) => {
   } catch (err) {
     res.json({ message: "course not created", error: err });
   }
-};
+}
+
+const getCourseInfo = async (req, res) => {
+  try{
+    const courseID = req.body.courseID;
+    const courseName = req.body.name;
+    if(courseID){
+      const course = await Course.findOne({ where : { courseID : courseID  }});
+      if(course) res.json({ "info" : course});
+      else  res.json({"error" : "not found"});
+    }else{
+      const course = await Course.findOne({ where : { name : courseName}});
+      if(course) res.json({ "info" : course});
+      else  res.json({"error" : "not found"});
+    }
+  }catch(err){
+    res.json({"error" : err});
+  }
+}
+
+const updateCourse = async (req,res) => {
+  try{
+  const requested = req.body;
+  const courseID = requested.courseID;
+  const courseName = requested.name;
+  let course;
+  if(courseID) course = await Course.findOne({ where : { courseID : courseID  }});
+  else{
+    course = await Course.findOne({ where : { name : courseName}});
+    courseID = course.courseID
+  }
+  const newName = requested.newName ? requested.newName : course.name;
+  const newInstructor = requested.newInstructor ? requested.newInstructor : course.instructor;
+  const newPrice = requested.newPrice ? requested.newPrice : course.price;
+  const newDescription = requested.newDescription ? requested.newDescription : course.description;
+  const newCategory = requested.newCategory ? requested.newCategory : course.category;
+  const [rowsAffected,updatedCourse] = await Course.update(
+    { name : newName, instructor : newInstructor, price : newPrice, description : newDescription, category : newCategory},
+    { where : { courseID : courseID}}
+  )
+  if (rowsAffected==1) {
+    res.json({
+      "message": "updated successfully",
+      "updatedInfo": updatedCourse,
+    });
+  } else {
+    res.json({ error: "error while updating info" });
+  }
+  }catch(err){
+    res.json({ error: "error while updating info" });
+  }
+}
+
+const deleteCourse = async (req,res) => {
+  try{
+  const requested = req.body;
+  let courseID = requested.courseID;
+  let courseName = requested.name;
+  let course;
+  if(courseID) course = await Course.findOne({ where : { courseID : courseID  }});
+  else{
+    course = await Course.findOne({ where : { name : courseName}});
+    courseID = course.courseID;
+  }
+  const rowsDeleted = await Course.destroy({ where: { courseID : courseID } });
+  if(rowsDeleted==0){
+    res.json({"error" : "unable to delete check course name or time"});
+  }else{
+    res.json({message : "deletion successfull"})
+  }
+  }catch(err){
+    res.json({"error" : "unable to delete check course name or time"});
+  }
+}
 
 module.exports = {
   handleAdminSignUp,
   handleAdminLogin,
   getAdminInfo,
   updateAdminInfo,
-  createCourse
+  createCourse,
+  getCourseInfo,
+  updateCourse,
+  deleteCourse
 };

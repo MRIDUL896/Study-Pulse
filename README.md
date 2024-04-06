@@ -22,3 +22,6 @@ Backend code for an e-learning platform.
 
 ### Day 4 (5 April, 2024)
 - Added fuctionalities for admin like login, get info,update info and create course.
+
+### Day 5 (6 April, 2024)
+- Added get, update and delete course information fuctionalities for admin.

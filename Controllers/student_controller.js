@@ -71,9 +71,9 @@ const updateStudentInfo = async (req, res) => {
   try {
     const mail = req.body["email"];
     const student = await student_model.findOne({ where: { email: mail } });
-    const newName = req.body["newName"];
-    const newEmail = req.body["newEmail"];
-    const newPassword = req.body["newPassword"];
+    const newName = req.body["newName"] ? req.body["newName"] : student.name;
+    const newEmail = req.body["newEmail"] ? req.body["newEmail"] : student.email;
+    const newPassword = req.body["newPassword"] ? req.body["newPassword"] : student.password;
     const [rowsAffected,updatedStudent] = await student_model.update(
       { name : newName, email :newEmail, password : newPassword },
       { where: { studentID: student["studentID"] } }
