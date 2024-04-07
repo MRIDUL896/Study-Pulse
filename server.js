@@ -23,7 +23,7 @@ sequelize.authenticate().then(()=>{
 });
 
 //syncing with database(updation)
-sequelize.sync().then(()=>{
+sequelize.sync({force:true}).then(()=>{
     console.log('Database sync is successfull');
 }).catch((err) => {
     console.error('Database sync is unsuccessfull', err);

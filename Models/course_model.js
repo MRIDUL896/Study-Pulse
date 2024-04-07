@@ -47,6 +47,9 @@ const Course = sequelize.define('Course',{
     startDate : {
         type : DataTypes.DATE,
         //allowNull : false
+    },
+    studentCount : {
+        type : DataTypes.INTEGER
     }
 },{
     tableName : 'courses'
@@ -62,11 +65,5 @@ const Course = sequelize.define('Course',{
 //     "category" : "",
 //     "level" : ""
 // }
-// Course.belongsToMany(Student,{
-//     through : Enrollment,
-//     foreignKey : 'courseID',
-//     otherKey : 'studentID',
-//     attributes : ['name','email','roll']
-// })
 
 module.exports = Course;

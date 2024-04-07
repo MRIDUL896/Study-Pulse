@@ -20,7 +20,6 @@ const Student = sequelize.define('Student', {
   studentID : {
     type : DataTypes.INTEGER,
     // allowNull: false,
-    unique : true,
     autoIncrement : true,
     primaryKey : true
   },

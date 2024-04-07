@@ -1,22 +1,36 @@
+const Course = require("../Models/course_model");
+const Enrollment = require("../Models/enrollment_model");
 const student_model = require("../Models/student_model");
 const jwt = require("jsonwebtoken");
+const {Resend} = require('resend');
+const resend = new Resend('re_P38JZQDN_3Aqdga2XmUz3j8cN5JGhSWP9')
 
 const handleStudentSignUp = async (req, res) => {
   let student = req.body;
   try {
-    student_model
-      .create(student)
-      .then(() => {
-        console.log("signup successfull");
-        res.json({ 'message': "signup successful", "new student": student });
-      })
-      .catch((err) => {
-        console.log("signup unsuccessfull");
-        res.json({ 'message': "signup unsuccessful", error: err });
-      });
+    const newStudent = await student_model.create(student);
+    console.log("signup successful");
+    // Format student details
+    const studentDetails = `
+      Name: ${newStudent.name}
+      Email: ${newStudent.email}
+      Roll: ${newStudent.studentID}`;
+    // Send email
+    const mail = newStudent.email;
+    await resend.emails.send({
+      from: 'Acme <onboarding@resend.dev>',
+      to: [`${mail}`],
+      subject: `Signup successful , your details `,
+      text: `You are now a student on Study Pulse ${studentDetails}`,
+      headers: {
+        'X-Entity-Ref-ID': '123456789',
+      }
+    });
+
+    res.json({ 'message': "signup successful", "new student": newStudent });
   } catch (err) {
-    console.log("signup unsuccessfull");
-    res.json({ "message": "signup unsuccessful", error: err });
+    console.log("signup unsuccessful");
+    res.json({ 'message': "signup unsuccessful", error: err });
   }
 }
 
@@ -73,9 +87,8 @@ const updateStudentInfo = async (req, res) => {
     const student = await student_model.findOne({ where: { email: mail } });
     const newName = req.body["newName"] ? req.body["newName"] : student.name;
     const newEmail = req.body["newEmail"] ? req.body["newEmail"] : student.email;
-    const newPassword = req.body["newPassword"] ? req.body["newPassword"] : student.password;
     const [rowsAffected,updatedStudent] = await student_model.update(
-      { name : newName, email :newEmail, password : newPassword },
+      { name : newName, email :newEmail },
       { where: { studentID: student["studentID"] } }
     );
     if (rowsAffected==1) {
@@ -91,4 +104,84 @@ const updateStudentInfo = async (req, res) => {
   }
 }
 
-module.exports = { handleStudentSignUp, handleStudentLogin, getUserInfo ,updateStudentInfo};
+const getCourses = async (req,res) =>{
+  try{
+    const courses = await Course.findAll();
+    if(courses){
+      res.json(courses);
+    }else{
+      res.json({"error" : "error finding courses"});
+    }
+  }catch(err){
+    res.json({"error" : "error finding courses"});
+  }
+}
+
+const filterCourses = async (req,res) => {
+  const {category,level,popularity} = req.body;
+  console.log(category,level,popularity)
+  try{
+    const courses = await Course.findAll({
+      where : {
+        ...(category && {category}),
+        ...(level && {level}),
+        ...(popularity && {popularity})
+      }
+    })
+    console.log(courses)
+    if(courses) res.json(courses);
+    else res.json({"error" : "error finding courses"});
+  }catch(err){
+    res.json({"error" : "error finding courses"});
+  }
+}
+
+const enrollInCourse = async (req,res) => {
+  const { studentID, courseID } = req.body;
+
+  try {
+    // Check if the enrollment already exists
+    const existingEnrollment = await Enrollment.findOne({
+      where: {
+        studentID: studentID,
+        courseID: courseID
+      }
+    });
+
+    if (existingEnrollment) {
+      return res.status(400).json({ error: 'Student is already enrolled in the course' });
+    }
+
+    // Create a new enrollment
+    await Enrollment.create({
+      studentID: studentID,
+      courseID: courseID
+    });
+
+    // Increment the studentCount for the course
+    const course = await Course.findByPk(courseID);
+    if (course) {
+      await course.increment('studentCount');
+    } else {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    res.json({ message: 'Enrolled successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to enroll in course' });
+  }
+}
+
+const myCourses = async (req,res) => {
+  const {email} = req.body;
+  try{
+    const student = await student_model.findOne({ where : { email : email}});
+    const courses = await student.getCourses();
+    res.json({courses});
+  }catch(err){
+    res.json({"error" : "error finding courses"});
+  }
+}
+
+module.exports = { handleStudentSignUp, handleStudentLogin, getUserInfo ,updateStudentInfo, getCourses, filterCourses, enrollInCourse,myCourses};

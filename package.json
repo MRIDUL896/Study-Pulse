@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "nodemon server.js"
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "nodemon": "^3.1.0",
     "pg": "^8.11.4",
     "pg-hstore": "^2.3.4",
+    "resend": "^3.2.0",
     "sequelize": "^6.37.2"
   }
 }
