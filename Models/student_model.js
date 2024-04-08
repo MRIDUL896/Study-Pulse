@@ -23,6 +23,9 @@ const Student = sequelize.define('Student', {
     autoIncrement : true,
     primaryKey : true
   },
+  profilePhoto : {
+    type : DataTypes.BLOB
+  }
 }, {
   tableName: 'students',
 });

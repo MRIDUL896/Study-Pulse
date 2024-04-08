@@ -6,11 +6,12 @@ Backend code for an e-learning platform.
 ### Tools and Technologies Use
 - ExpessJS in NodeJS : for server
 - Neon : for online postgres database
-- Sequelize : for object relational mapping (JS to Postgres commands conversion)
-- Postman : for checking restful APIs and ease of development
-- Gituhub : for maintaining code
+- Resend : for sending email notifications
+- Sequelize : module for object relational mapping (JS to Postgres commands conversion)
+- Postman : for testing restful APIs and ease of development
+- Github : for maintaining code
 
-## Progress 
+# Progress 
 Below is the small journal of my progress in this project.
 
 ### Day 1 (2 April, 2024)
@@ -38,3 +39,13 @@ Below is the small journal of my progress in this project.
 - Added API endpoint to fetch courses available on the platform. Implement filtering options based on parameters such as category, level, popularity.
 - Added API for course enrollment and fecthing enrolled courses for students. 
 - Integrated resend.com's free tier for student signup notification.
+
+### Day 7 (8 April, 2024)
+- Created middleware for password strength during signup.
+- Implemented hashing for safe password storage.
+- Created a middleware for sending email notification after signup and course enrollment.
+
+
+
+### Pending Requirements
+- Profile photo upload for students.

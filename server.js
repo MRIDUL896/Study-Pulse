@@ -22,7 +22,7 @@ sequelize.authenticate().then(()=>{
     console.log('Error connecting to the database:', err);
 });
 
-//syncing with database(updation)
+//syncing with database (updation)
 sequelize.sync({force:true}).then(()=>{
     console.log('Database sync is successfull');
 }).catch((err) => {

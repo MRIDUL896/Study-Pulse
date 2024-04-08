@@ -1,21 +1,34 @@
+const pswdStrength = require("../Middlewares/passwordStrength");
 const Course = require("../Models/course_model");
 const SuperAdmin = require("../Models/superAdmin_model");
 const jwt = require("jsonwebtoken");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESENDKEY);
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const handleAdminSignUp = async (req, res) => {
   let admin = req.body;
   try {
-    SuperAdmin.create(admin)
-      .then(() => {
-        console.log("signup successfull");
-        res.json({ message: "signup successful", "new admin": admin });
-      })
-      .catch((err) => {
-        console.log("signup unsuccessfull");
-        res.json({ message: "signup unsuccessful", error: err });
-      });
+    const pswd = admin.password;
+    if(pswdStrength(pswd)=="weak") res.json({ message: "password too weak" });
+    else{
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(admin.password, saltRounds);
+      admin.password = hashedPassword;
+      //creating admin
+      const newAdmin = await SuperAdmin.create(admin);
+      // Format student details
+      const adminDetails = `
+      Name: ${newAdmin.name}
+      Email: ${newAdmin.email}
+      Roll: ${newAdmin.adminID}`;
+      // Send email
+      await sendMail(newAdmin.email,'Signup successful, your details',`You are now an admin on Study Pulse ${newAdmin}`);
+      res.json({ message: "signup successful", "new admin": newAdmin });
+    }
   } catch (err) {
-    console.log("signup unsuccessfull");
+    console.log("signup unsuccessfull2");
     res.json({ message: "signup unsuccessful", error: err });
   }
 };
@@ -27,23 +40,25 @@ const handleAdminLogin = async (req, res) => {
     const pass = user["password"];
     const admin = await SuperAdmin.findOne({ where: { email: email } });
     if (admin) {
-      if (pass == admin["password"]) {
-        jwt.sign({ email: email }, process.env.SECRETKEY, (err, token) => {
-          if (err) {
-            res.send({ Message: "Something is wrong", err: err });
-          } else {
-            res.json({
-              Message: "Login Successful, Welcome admin",
-              data: req.body,
-              token: token,
-            });
-          }
-        });
-      } else {
-        res.json({ message: "wrong email or password1" });
-      }
+      bcrypt.compare(pass,admin["password"],(err,result) => {
+        if(err) res.send({ Message: "Something is wrong", err: err });
+        else if(result){
+          jwt.sign({ email: email }, process.env.SECRETKEY, (err, token) => {
+            if (err) {
+              res.send({ Message: "Something is wrong", err: err });
+            } else  {
+              res.json({
+                Message: "Login Successful, Welcome admin",
+                data: req.body,
+                token: token,
+              });
+            }
+          });
+        }
+        else res.json({ message: "wrong email or password2" });
+      })
     } else {
-      res.json({ message: "wrong email or password2" });
+      res.json({ message: "wrong email or password3" });
     }
   } catch (err) {
     console.log(err);
