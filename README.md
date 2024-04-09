@@ -7,9 +7,10 @@ Backend code for an e-learning platform.
 - ExpessJS in NodeJS : for server
 - Neon : for online postgres database
 - Resend : for sending email notifications
-- Sequelize : module for object relational mapping (JS to Postgres commands conversion)
+- Sequelize : module for object relational mapping (JS to Postgres queries conversion)
 - Postman : for testing restful APIs and ease of development
 - Github : for maintaining code
+- VS Code : Code editor
 
 # Progress 
 Below is the small journal of my progress in this project.
